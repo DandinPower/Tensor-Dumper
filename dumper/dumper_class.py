@@ -24,7 +24,22 @@ class Dumper:
             np.savez(filename, array=array)
 
     @staticmethod
-    def load_tensor(filename):
+    def load_tensor_in_numpy(filename) -> np.ndarray:
+        """
+        Load a tensor from a file.
+
+        Args:
+            filename (str): The path to the file containing the tensor.
+
+        Returns:
+            np.ndarray: The loaded tensor.
+        """
+        with np.load(filename, allow_pickle=True) as data:
+            array = data['array']
+        return array
+
+    @staticmethod
+    def load_tensor(filename) -> torch.Tensor:
         """
         Load a tensor from a file.
 
@@ -34,7 +49,6 @@ class Dumper:
         Returns:
             torch.Tensor: The loaded tensor.
         """
-        with np.load(filename, allow_pickle=True) as data:
-            array = data['array']
+        array = Dumper.load_tensor_in_numpy(filename)
         tensor = torch.from_numpy(array)
         return tensor

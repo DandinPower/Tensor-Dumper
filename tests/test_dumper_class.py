@@ -27,5 +27,14 @@ class TestDumper(unittest.TestCase):
                     np.testing.assert_array_equal(loaded_tensor.numpy(), tensor.numpy())
                     os.remove(self.filename)
 
+    def test_save_load_tensor_in_numpy(self):
+        for tensor in [self.tensor_fp32, self.tensor_fp16, self.tensor_int, self.tensor_bool, self.tensor_large]:
+            for is_compressed in [True, False]:
+                with self.subTest(tensor=tensor, is_compressed=is_compressed):
+                    self.dumper.save_tensor(self.filename, tensor, is_compressed)
+                    loaded_tensor = self.dumper.load_tensor_in_numpy(self.filename)
+                    np.testing.assert_array_equal(loaded_tensor, tensor.numpy())
+                    os.remove(self.filename)
+
 if __name__ == '__main__':
     unittest.main()
