@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+import os
+from .utils import ensure_dir_exists_by_filename
 
 class Dumper:
     """A class for dumping tensors to disk."""
@@ -17,6 +19,7 @@ class Dumper:
         Returns:
             None
         """
+        ensure_dir_exists_by_filename(filename)
         array = tensor.detach().numpy()
         if is_compressed:
             np.savez_compressed(filename, array=array)
@@ -34,6 +37,7 @@ class Dumper:
         Returns:
             np.ndarray: The loaded tensor.
         """
+        assert os.path.exists(filename), f"File {filename} does not exist."
         with np.load(filename, allow_pickle=True) as data:
             array = data['array']
         return array
@@ -49,6 +53,7 @@ class Dumper:
         Returns:
             torch.Tensor: The loaded tensor.
         """
+        assert os.path.exists(filename), f"File {filename} does not exist."
         array = Dumper.load_tensor_in_numpy(filename)
         tensor = torch.from_numpy(array)
         return tensor
